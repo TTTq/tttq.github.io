@@ -1,13 +1,226 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
+
 <head>
     <title>扫码挪车</title>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 350px;
+            width: 100%;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .call-btn {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .call-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .call-btn:active {
+            transform: translateY(0);
+        }
+
+        .call-icon {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        .wechat-section {
+            text-align: center;
+        }
+
+        .wechat-title {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .wechat-qr {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 3px solid #f0f0f0;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                padding: 30px 20px;
+            }
+
+            .title {
+                font-size: 20px;
+            }
+
+            .call-btn {
+                font-size: 16px;
+                padding: 12px 30px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-<h3>请扫码联系车主挪车</h3>
-<!-- 推荐隐藏真实号码，使用按钮触发拨打 -->
-<button onclick="window.location.href='tel:15982268324'">点击拨打车主</button>
-<p>或添加微信：<img src="wechat-qr.jpg" width="100"></p>
+    <div class="container">
+        <h1 class="title">🚗 挪车服务</h1>
+        <p class="subtitle">车主会尽快为您挪车，感谢您的耐心等待</p>
+
+        <button class="call-btn" onclick="callOwner()">
+            <span class="call-icon">📞</span>
+            联系车主
+        </button>
+
+        <div class="divider">
+            <span>或者</span>
+        </div>
+
+        <div class="wechat-section">
+            <p class="wechat-title">扫码添加微信</p>
+            <img src="wechat-qr.jpg" alt="微信二维码" class="wechat-qr">
+        </div>
+
+        <p class="footer">请文明用车，共建和谐社区</p>
+    </div>
+
+    <script>
+        // 加密的手机号码 (使用Base64 + 简单偏移加密)
+        const encryptedPhone = 'MTY5ODMzNjkzMjU=';
+
+        // 解密函数
+        function decryptPhone(encrypted) {
+            try {
+                // Base64解码
+                const decoded = atob(encrypted);
+                // 简单偏移解密 (每位数字-1)
+                let phone = '';
+                for (let i = 0; i < decoded.length; i++) {
+                    const char = decoded[i];
+                    if (char >= '0' && char <= '9') {
+                        phone += String.fromCharCode(char.charCodeAt(0) - 1);
+                    } else {
+                        phone += char;
+                    }
+                }
+                return phone;
+            } catch (e) {
+                console.error('解密失败');
+                return null;
+            }
+        }
+
+        function callOwner() {
+            // 解密手机号码
+            const phoneNumber = decryptPhone(encryptedPhone);
+            if (phoneNumber) {
+                // 跳转到拨号界面
+                window.location.href = 'tel:' + phoneNumber;
+            } else {
+                alert('联系方式获取失败，请稍后重试');
+            }
+        }
+
+        // 添加一些交互效果
+        document.addEventListener('DOMContentLoaded', function () {
+            const button = document.querySelector('.call-btn');
+            button.addEventListener('touchstart', function () {
+                this.style.transform = 'scale(0.95)';
+            });
+            button.addEventListener('touchend', function () {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
 </body>
+
 </html>
