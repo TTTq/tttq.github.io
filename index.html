@@ -174,24 +174,15 @@
     </div>
 
     <script>
-        // 加密的手机号码 (使用Base64 + 简单偏移加密)
-        const encryptedPhone = 'MjYwOTMzNzk0MzU=';
+        // 加密的手机号码 (使用Base64编码)
+        const encryptedPhone = 'MTU5ODIyNjgzMjQ=';
 
         // 解密函数
         function decryptPhone(encrypted) {
             try {
-                // Base64解码
-                const decoded = atob(encrypted);
-                // 简单偏移解密 (每位数字-1)
-                let phone = '';
-                for (let i = 0; i < decoded.length; i++) {
-                    const char = decoded[i];
-                    if (char >= '0' && char <= '9') {
-                        phone += String.fromCharCode(char.charCodeAt(0) - 1);
-                    } else {
-                        phone += char;
-                    }
-                }
+                // 直接Base64解码
+                const phone = atob(encrypted);
+                console.log(phone)
                 return phone;
             } catch (e) {
                 console.error('解密失败');
