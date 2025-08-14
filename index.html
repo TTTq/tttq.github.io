@@ -182,7 +182,6 @@
             try {
                 // 直接Base64解码
                 const phone = atob(encrypted);
-                console.log(phone)
                 return phone;
             } catch (e) {
                 console.error('解密失败');
